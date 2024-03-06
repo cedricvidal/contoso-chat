@@ -20,20 +20,28 @@ outputs:
     is_chat_output: true
   intent_context:
     type: string
-    reference: ${classify_intent_llm.output}
+    reference: ${classify_intent_llama.output}
   context:
     type: string
     reference: ${run_chat_or_support.output.context}
 nodes:
-- name: classify_intent_prompt
-  type: prompt
+- name: classify_intent_llama
+  type: custom_llm
+  source:
+    type: package_with_prompt
+    tool: promptflow.tools.open_model_llm.OpenModelLLM.call
+    path: llm_response.jinja2
+  inputs:
+    api: chat
+    endpoint_name: localconnection/llama-endpoint
+    question: ${inputs.question}
+- name: parse_intent
+  type: python
   source:
     type: code
-    path: intent.jinja2
+    path: parse_intent.py
   inputs:
-    question: ${inputs.question}
-  connection: aoai-connection
-  api: chat
+    input: ${classify_intent_llama.output}
 - name: run_chat_or_support
   type: python
   source:
@@ -42,17 +50,7 @@ nodes:
   inputs:
     chat_history: ${inputs.chat_history}
     question: ${inputs.question}
-    user_intent: ${classify_intent_llm.output}
+    user_intent: ${parse_intent.output}
     support_endpoint: support-endpoint
     chat_endpoint: chat-endpoint
     customerId: ${inputs.customerId}
-- name: classify_intent_llm
-  type: llm
-  source:
-    type: code
-    path: llm_response.jinja2
-  inputs:
-    deployment_name: gpt-35-turbo
-    prompt_text: ${classify_intent_prompt.output}
-  connection: aoai-connection
-  api: chat
