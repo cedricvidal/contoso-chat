@@ -10,6 +10,7 @@ def allowSelfSignedHttps(allowed):
 # bypass the server certificate verification on client side
     if allowed and not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
         ssl._create_default_https_context = ssl._create_unverified_context
+
 def call_endpoint(url, api_key, input_data, model_deployment_name):
     # Allow self-signed certificate
     allowSelfSignedHttps(True) # this line is needed if you use self-signed certificate in your scoring service.
@@ -50,8 +51,9 @@ def call_endpoint(url, api_key, input_data, model_deployment_name):
         # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
         print(error.info())
         print(error.read().decode("utf8", 'ignore'))
-            # call support endpoint and return response (input is question and customer id in json format)
-        return error.read().decode("utf8", 'ignore')
+
+        # Failing here helps surface issues
+        raise error
 
 @tool
 def run_chat_or_support_flow(
@@ -66,19 +68,13 @@ def run_chat_or_support_flow(
     run chat or support flow based on the intent
     """
 
-    if "support" in user_intent:
-        # call chat endpoint and return response (input is question and customer id in json format)
-        print("running support flow")
-        url = support_endpoint['api_base']
-        key = support_endpoint['api_key']
+    endpoint = support_endpoint if "support" in user_intent else chat_endpoint
 
-        input_data = {"question": question, "customerId": customerId, "chat_history": chat_history}
-        return call_endpoint(url, key, input_data, "contoso-support-9f8e7b")
-    else:
-        # call support endpoint and return response (input is question and customer id in json format)
-        print("running chat flow")
-        url = chat_endpoint['api_base']
-        key = chat_endpoint['api_key']
+    # call selected endpoint and return response (input is question and customer id in json format)
+    print("running {} flow".format(user_intent))
+    url = endpoint['api_base']
+    key = endpoint['api_key']
+    deployment_name = endpoint['deployment_name']
 
-        input_data = {"question": question, "customerId": customerId, "chat_history": chat_history}
-        return call_endpoint(url, key, input_data, "contoso-chat-b7a357")
+    input_data = {"question": question, "customerId": customerId, "chat_history": chat_history}
+    return call_endpoint(url, key, input_data, deployment_name)
