@@ -25,16 +25,28 @@ outputs:
     type: string
     reference: ${run_chat_or_support.output.context}
 nodes:
-- name: classify_intent_llama
-  type: custom_llm
+- name: prompt_user
+  type: prompt
   source:
-    type: package_with_prompt
-    tool: promptflow.tools.open_model_llm.OpenModelLLM.call
-    path: llm_response.jinja2
+    type: code
+    path: llama_prompt_user.jinja2
   inputs:
-    api: chat
-    endpoint_name: localconnection/llama-endpoint
     question: ${inputs.question}
+- name: prompt_system
+  type: prompt
+  source:
+    type: code
+    path: llama_prompt_system.jinja2
+  inputs: {}
+- name: classify_intent_llama
+  type: python
+  source:
+    type: code
+    path: classify_intent_llama.py
+  inputs:
+    connection: llama-endpoint
+    system_prompt: ${prompt_system.output}
+    user_prompt: ${prompt_user.output}
 - name: parse_intent
   type: python
   source:
