@@ -10,9 +10,6 @@ from openai import OpenAI
 @tool
 def classify_intent(connection: CustomConnection, system_prompt: str, user_prompt: str) -> str:
 
-    #endpoint_url = 'https://Llama-2-7b-chat-gmqyf-serverless.westus3.inference.ai.azure.com'
-    #api_key = 'b7JHHhhMlMim8i8g1YzXBNCb5WSnQGzI'
-
     endpoint_url = connection['endpoint_url']
     api_key = connection['endpoint_api_key']
 
