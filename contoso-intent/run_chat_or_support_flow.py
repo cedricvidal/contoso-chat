@@ -76,7 +76,10 @@ def run_chat_or_support_flow(
     endpoint = intent_mapping.get(user_intent)
 
     if not endpoint:
-        return {'answer': "Sorry, I didn't understand that. Can you please rephrase your question?"}
+        return {
+            'answer': "Sorry, I didn't understand that. Can you please rephrase your question?",
+            'context': ''
+            }
 
     # call selected endpoint and return response (input is question and customer id in json format)
     print("running {} flow".format(user_intent))

@@ -25,19 +25,13 @@ outputs:
     type: string
     reference: ${run_chat_or_support.output.context}
 nodes:
-- name: prompt_user
+- name: prompt_completion
   type: prompt
   source:
     type: code
-    path: llama_prompt_user.jinja2
+    path: llama_prompt_completion.jinja2
   inputs:
     question: ${inputs.question}
-- name: prompt_system
-  type: prompt
-  source:
-    type: code
-    path: llama_prompt_system.jinja2
-  inputs: {}
 - name: classify_intent_llama
   type: python
   source:
@@ -45,8 +39,7 @@ nodes:
     path: classify_intent_llama.py
   inputs:
     connection: llama-endpoint
-    system_prompt: ${prompt_system.output}
-    user_prompt: ${prompt_user.output}
+    prompt: ${prompt_completion.output}
 - name: parse_intent
   type: python
   source:

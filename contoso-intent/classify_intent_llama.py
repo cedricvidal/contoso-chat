@@ -8,7 +8,7 @@ from openai import OpenAI
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
 @tool
-def classify_intent(connection: CustomConnection, system_prompt: str, user_prompt: str) -> str:
+def classify_intent(connection: CustomConnection, prompt: str) -> str:
 
     endpoint_url = connection['endpoint_url']
     api_key = connection['endpoint_api_key']
@@ -22,12 +22,17 @@ def classify_intent(connection: CustomConnection, system_prompt: str, user_promp
         api_key=api_key,
     )
 
-    response = client.chat.completions.create(
-        model="Llama-2-7b-chat-gmqyf", # model = "deployment_name".
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ]
+    deployment_name = "Llama-2-7b-chat-gmqyf"
+
+    response = client.completions.create(
+        model=deployment_name,
+        prompt=prompt,
+        stop="STOP",
+        temperature=0.5,
+        max_tokens=128,
+        top_p=0.1,
+        best_of=1,
+        presence_penalty=0,
     )
 
-    return response.choices[0].message.content
+    return response.choices[0].text.strip()
