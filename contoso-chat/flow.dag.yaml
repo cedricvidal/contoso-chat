@@ -34,7 +34,7 @@ nodes:
     connection: aoai-connection
     input: ${inputs.question}
     deployment_name: text-embedding-ada-002
-- name: retrieve_documentation
+- name: retrieve_products_doc
   type: python
   source:
     type: code
@@ -58,7 +58,7 @@ nodes:
     type: code
     path: customer_prompt.jinja2
   inputs:
-    documentation: ${retrieve_documentation.output}
+    documentation: ${retrieve_products_doc.output}
     customer: ${customer_lookup.output}
     history: ${inputs.chat_history}
 - name: llm_response
