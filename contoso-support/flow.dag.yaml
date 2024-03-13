@@ -49,7 +49,7 @@ nodes:
     conn: contoso-cosmos
     customerId: ${inputs.customerId}
   use_variants: false
-- name: retrieve_support_documentation
+- name: retrieve_manuals
   type: python
   source:
     type: code
@@ -67,7 +67,7 @@ nodes:
     path: customer_prompt.jinja2
   inputs:
     customer: ${customer_lookup.output}
-    documentation: ${retrieve_support_documentation.output}
+    documentation: ${retrieve_manuals.output}
   use_variants: false
 - name: llm_call
   type: llm
@@ -89,7 +89,7 @@ nodes:
     type: code
     path: context.py
   inputs:
-    citations: ${retrieve_support_documentation.output}
+    citations: ${retrieve_manuals.output}
     customer_data: ${customer_lookup.output}
 - name: rewrite_query
   type: python
