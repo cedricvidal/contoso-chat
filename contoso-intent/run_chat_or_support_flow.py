@@ -68,7 +68,15 @@ def run_chat_or_support_flow(
     run chat or support flow based on the intent
     """
 
-    endpoint = support_endpoint if "support" in user_intent else chat_endpoint
+    intent_mapping = {
+        'chat': chat_endpoint,
+        'support': support_endpoint,
+    }
+
+    endpoint = intent_mapping[user_intent]
+
+    if not endpoint:
+        return {'answer': "Could not determine intent"}
 
     # call selected endpoint and return response (input is question and customer id in json format)
     print("running {} flow".format(user_intent))
