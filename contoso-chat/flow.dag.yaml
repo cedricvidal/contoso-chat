@@ -23,7 +23,7 @@ outputs:
     is_chat_output: true
   context:
     type: string
-    reference: ${retrieve_documentation.output}
+    reference: ${retrieve_products_doc.output}
 nodes:
 - name: question_embedding
   type: python
@@ -38,7 +38,7 @@ nodes:
   type: python
   source:
     type: code
-    path: retrieve_documentation.py
+    path: retrieve_products_doc.py
   inputs:
     question: ${inputs.question}
     index_name: contoso-products
