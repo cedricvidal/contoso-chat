@@ -24,6 +24,7 @@ def classify_intent(connection: CustomConnection, prompt: str) -> str:
 
     deployment_name = "Llama-2-7b-chat-gmqyf"
 
+    # COMPLETION API
     response = client.completions.create(
         model=deployment_name,
         prompt=prompt,
