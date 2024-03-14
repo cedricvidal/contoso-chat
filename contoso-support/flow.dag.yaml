@@ -19,7 +19,7 @@ outputs:
     is_chat_output: true
   citations:
     type: object
-    reference: ${retrieve_support_documentation.output}
+    reference: ${retrieve_manuals.output}
   customer_data:
     type: object
     reference: ${customer_lookup.output}
@@ -53,7 +53,7 @@ nodes:
   type: python
   source:
     type: code
-    path: retrieve_support_documentation.py
+    path: retrieve_manuals.py
   inputs:
     search: contoso-search
     question: ${inputs.question}
