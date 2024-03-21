@@ -6,3 +6,4 @@ config.json
 eval/downloaded_artifacts/remote/eval_results.jsonl
 MLIndex
 
+.DS_Store
