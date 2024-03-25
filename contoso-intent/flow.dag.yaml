@@ -25,21 +25,17 @@ outputs:
     type: string
     reference: ${run_chat_or_support.output.context}
 nodes:
-- name: prompt_completion
-  type: prompt
+- name: classify_intent_llama
+  type: custom_llm
   source:
-    type: code
+    type: package_with_prompt
+    tool: promptflow.tools.open_model_llm.OpenModelLLM.call
     path: llama_prompt_completion.jinja2
   inputs:
+    api: completion
+    deployment_name: contoso-intent-llama-2-evqlo-7
+    endpoint_name: localConnection/llama-endpoint
     question: ${inputs.question}
-- name: classify_intent_llama
-  type: python
-  source:
-    type: code
-    path: classify_intent_llama.py
-  inputs:
-    connection: llama-endpoint
-    prompt: ${prompt_completion.output}
 - name: parse_intent
   type: python
   source:
